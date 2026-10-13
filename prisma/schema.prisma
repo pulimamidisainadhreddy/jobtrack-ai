@@ -1,0 +1,92 @@
+
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String
+  name String?
+  education String? @default("MSc Data Science")
+  location String? @default("Berlin, Germany")
+  targetRoles String[] @default(["Junior Data Engineer", "Graduate Data Engineer"])
+  skills String[] @default(["Python", "SQL", "PySpark"])
+  preferences Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  applications Application[]
+  interviews Interview[]
+  contacts Contact[]
+  documents Document[]
+  tasks Task[]
+  cvVersions CvVersion[]
+  coverLetters CoverLetter[]
+  analyses JobAnalysis[]
+}
+model Application {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName String
+  jobTitle String
+  jobDescription String? @db.Text
+  jobUrl String?
+  companyWebsite String?
+  jobLocation String? @default("Berlin")
+  country String? @default("Germany")
+  workArrangement String?
+  employmentType String? @default("Full-time")
+  requiredSkills String[]
+  preferredSkills String[]
+  germanReq String?
+  englishReq String?
+  salaryMin Int?
+  salaryMax Int?
+  salaryCurrency String? @default("EUR")
+  postingDate DateTime?
+  deadline DateTime?
+  applicationDate DateTime @default(now())
+  status String @default("Saved")
+  platform String?
+  cvVersionId String?
+  notes String? @db.Text
+  followUpDate DateTime?
+  nextAction String?
+  priority String? @default("Medium")
+  matchScore Int?
+  lastUpdated DateTime @updatedAt
+  isDraft Boolean @default(false)
+  interviews Interview[]
+  history ApplicationHistory[]
+  @@index([userId, status])
+}
+model ApplicationHistory {
+  id String @id @default(cuid())
+  applicationId String
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStatus String?
+  toStatus String
+  changedAt DateTime @default(now())
+}
+model Interview {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applicationId String?
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  company String
+  jobTitle String
+  type String?
+  date DateTime
+  timezone String? @default("Europe/Berlin")
+  platform String?
+  link String?
+  interviewerName String?
+  prepNotes String? @db.Text
+  result String?
+}
+model Contact { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) name String company String? email String? linkedIn String? nextFollowUp DateTime? notes String? @db.Text }
+model Document { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) name String type String fileUrl String fileSize Int? createdAt DateTime @default(now()) }
+model CvVersion { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) name String fileUrl String? content String? @db.Text createdAt DateTime @default(now()) }
+model CoverLetter { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) name String jobTitle String? company String? content String @db.Text createdAt DateTime @default(now()) }
+model JobAnalysis { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) rawDescription String @db.Text matchScore Int? result Json? createdAt DateTime @default(now()) }
+model Task { id String @id @default(cuid()) userId String user User @relation(fields: [userId], references: [id], onDelete: Cascade) title String type String dueDate DateTime? completed Boolean @default(false) }

@@ -1,0 +1,1 @@
+Verification checklist: login, CRUD, refresh persistence, logout/login persistence, mobile, HTTPS, restart persistence, rate limiting, GDPR export/delete.
