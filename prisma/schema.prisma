@@ -12,14 +12,8 @@ model User {
   email String @unique
   passwordHash String
   name String?
-  education String? @default("MSc Data Science")
-  location String? @default("Berlin, Germany")
-  targetRoles String[]
-  skills String[]
-  preferences Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   applications Application[]
   interviews Interview[]
   contacts Contact[]
@@ -35,35 +29,18 @@ model Application {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   companyName String
   jobTitle String
-  jobDescription String? @db.Text
-  jobUrl String?
-  jobLocation String? @default("Berlin")
-  country String? @default("Germany")
-  workArrangement String?
-  requiredSkills String[]
-  preferredSkills String[]
-  applicationDate DateTime @default(now())
   status String @default("Saved")
-  platform String?
-  notes String? @db.Text
-  followUpDate DateTime?
-  priority String? @default("Medium")
-  matchScore Int?
-  lastUpdated DateTime @updatedAt
-
-  @@index([userId, status])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Interview {
   id String @id @default(cuid())
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  applicationId String?
   company String
   jobTitle String
   date DateTime
-  timezone String? @default("Europe/Berlin")
-  result String?
 }
 
 model Contact {
@@ -71,9 +48,6 @@ model Contact {
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name String
-  company String?
-  email String?
-  linkedIn String?
 }
 
 model Document {
@@ -83,7 +57,6 @@ model Document {
   name String
   type String
   fileUrl String
-  createdAt DateTime @default(now())
 }
 
 model CvVersion {
@@ -91,8 +64,6 @@ model CvVersion {
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name String
-  content String? @db.Text
-  createdAt DateTime @default(now())
 }
 
 model CoverLetter {
@@ -101,7 +72,6 @@ model CoverLetter {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   name String
   content String @db.Text
-  createdAt DateTime @default(now())
 }
 
 model Task {
